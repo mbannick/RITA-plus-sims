@@ -1,4 +1,4 @@
-library(XSRecency)
+library(XSRecency, lib.loc="~/r-libs/")
 library(magrittr)
 
 simulate <- function(n_sims, n, inc.function, infection.function, phi.func,

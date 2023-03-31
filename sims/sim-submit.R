@@ -1,5 +1,6 @@
-library(simtools)
 library(R.utils)
+library(data.table)
+library(simtools, lib.loc="~/r-libs/")
 
 source("./paramlists.R")
 
@@ -15,7 +16,7 @@ args <- commandArgs(
   )
 )
 
-BASEDIR <- "~/xs-enhanced"
+BASEDIR <- "~/simulation-runs/rita"
 
 # Construct parameter grid based on the scenario ------
 

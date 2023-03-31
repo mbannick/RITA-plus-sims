@@ -3,12 +3,12 @@ rm(list=ls())
 library(data.table)
 library(magrittr)
 library(stringr)
-library(flexsurv)
+library(flexsurv, lib.loc="~/r-libs/")
 library(R.utils)
 
 # Load XSRecency
-library(XSRecency)
-library(simtools)
+library(XSRecency, lib.loc="~/r-libs/")
+library(simtools, lib.loc="~/r-libs/")
 
 source("./paramlists.R")
 source("./sim-helpers.R")
