@@ -16,7 +16,7 @@ args <- commandArgs(
   )
 )
 
-BASEDIR <- "~/simulation-runs/rita"
+BASEDIR <- "~/simulation-runs/rita/"
 
 # Construct parameter grid based on the scenario ------
 
@@ -51,4 +51,4 @@ outdir <- setup.directories(BASEDIR, args$desc)
 njobs <- save.params(PARAMS, outdir)
 
 # Submit job array
-submit.jobs(njobs, "shell.sh", "simulate-parallel.R", outdir)
+submit.jobs(njobs, "shell.sh", "sim-run.R", outdir)

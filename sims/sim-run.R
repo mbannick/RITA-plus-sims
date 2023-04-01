@@ -33,6 +33,9 @@ gp <- get.param.closure(TASKID, PARAMS)
 set.stream.seed(gp("seed"), NTASKS, TASKID)
 
 ARGS <- gp()
+sims <- seq(gp("start_sim"),
+            min(gp("start_sim")+gp("sim_blocksize")-1, gp("n_sims")), 1)
+ARGS[["n_sims"]] <- length(sims)
 
 # Get the baseline phi function
 ARGS[["phi.func"]] <- doCall(get.phi, args=gp())
@@ -102,4 +105,4 @@ df[, simstart := gp("start_sim")]
 df[, TASKID := TASKID]
 
 filename <- paste0("results-", TASKID)
-write.csv(df, file=paste0(OUTDIR, "/", filename, ".csv"))
+write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
