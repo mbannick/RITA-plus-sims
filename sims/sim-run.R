@@ -3,12 +3,8 @@ rm(list=ls())
 library(data.table)
 library(magrittr)
 library(stringr)
-library(flexsurv, lib.loc="~/r-libs/")
 library(R.utils)
-
-# Load XSRecency
-library(XSRecency, lib.loc="~/r-libs/")
-library(simtools, lib.loc="~/r-libs/")
+library(geepack)
 
 source("./paramlists.R")
 source("./sim-helpers.R")
@@ -20,10 +16,16 @@ if(is.parallel()){
   OUTDIR <- a[1]
   TASKID <- as.numeric(Sys.getenv('SLURM_ARRAY_TASK_ID'))
   PARAMS <- read.csv(sprintf("%s/params.csv", OUTDIR))
+  library(flexsurv, lib.loc="~/r-libs/")
+  library(simtools, lib.loc="~/r-libs/")
+  library(XSRecency, lib.loc="~/r-libs/")
 } else {
   OUTDIR <- "."
   TASKID <- 1
   PARAMS <- data.table(do.call(data.table, DEFAULTS))
+  library(flexsurv)
+  library(XSRecency)
+  library(simtools)
 }
 
 # Set up parameter grabber and set streaming seed for
@@ -71,10 +73,19 @@ if(!gp("pt")){
 
   if(gp("mech2")){
     GAMMA_PARMS <- c(1.57243557, 1.45286770, -0.02105187)
-    ptest.dist2 <- function(u) u - rgengamma(n=1,
-                                             mu=GAMMA_PARMS[1],
-                                             sigma=GAMMA_PARMS[2],
-                                             Q=GAMMA_PARMS[3])
+    ptest.dist2 <- function(u){
+      if(is.na(u)){
+        return(-999)
+      } else {
+        return(
+          u - rgengamma(
+            n=1,
+            mu=GAMMA_PARMS[1],
+            sigma=GAMMA_PARMS[2],
+            Q=GAMMA_PARMS[3])
+        )
+      }
+    }
   } else {
     ptest.dist2 <- NULL
   }

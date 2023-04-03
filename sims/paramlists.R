@@ -5,9 +5,9 @@ DEFAULTS <- list(
   seed=100,
   out_dir="./",
 
-  n_sims=2,
-  sim_blocksize=2,
-  start_sim=1,
+  n_sims=10,
+  sim_blocksize=5,
+  start_sim=9,
 
   n=5000,
   p=0.29,
@@ -36,13 +36,13 @@ DEFAULTS <- list(
   pt=TRUE,
   t_min=0,
   t_max=4,
-  q=1,
+  q=0.5,
 
   gamma=0.0, # variance for the Gaussian noise to add to prior test time
   eta=0.0, # the probability of incorrectly reporting negative test
   nu=0.0, # the probability of failing to report prior test result
   xi=0.0, # the probability of failing to report prior positive test results
-  mech2=TRUE,
+  mech2=FALSE,
   t_min_exclude=NULL,
   exclude_pt_bigT=FALSE
 )
@@ -118,4 +118,21 @@ get.paramlist.d <- function(startsims){
   return(params)
 }
 
+get.paramlist.e <- function(startsims){
 
+  params <- expand.grid(list(
+    q=0.5,
+    t_min=0,
+    t_max=c(4, 12),
+    itype=c("constant", "piecewise"),
+    rho=c(0, 0.0039),
+    t_min_exclude=c(0, 0.25),
+    exclude_pt_bigT=c(FALSE, TRUE),
+    start_sim=startsims
+  ))
+  params <- data.table(params)
+  params <- params[!(itype == "constant" & rho != 0)]
+  params <- params[!(itype == "piecewise" & rho == 0)]
+
+  return(params)
+}
