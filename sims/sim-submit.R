@@ -38,6 +38,8 @@ if(args$scenario == "a"){
   PARAMS <- get.paramlist.c(startsims)
 } else if(args$scenario == "d"){
   PARAMS <- get.paramlist.d(startsims)
+} else if(args$scenario == "e"){
+  PARAMS <- get.paramlist.e(startsims)
 } else {
   stop("Unrecognized scenario")
 }

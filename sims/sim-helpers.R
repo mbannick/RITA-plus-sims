@@ -1,4 +1,3 @@
-library(XSRecency, lib.loc="~/r-libs/")
 library(magrittr)
 
 simulate <- function(n_sims, n, inc.function, infection.function, phi.func,
@@ -76,7 +75,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
                      d_misrep=0.0, q_misrep=0.0, p_misrep=0.0,
                      ptest.dist2=NULL,
                      exclude_pt_bigT=FALSE,
-                     t_total_exclude){
+                     t_min_exclude=NULL){
 
   # Generate assay simulations
   cat("Generating assay simulations\n")
@@ -96,7 +95,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
                                           lambda_0=baseline_incidence,
                                           rho=rho)
   )
-  dfs_screening <- replicate(n_sims, sim(n, return_n=F), simplify=F)
+  dfs_screening <- replicate(n_sims, sim(n, return_n=T), simplify=F)
 
   # Generate prior testing data
   cat("Generating prior testing data\n")
@@ -116,17 +115,33 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   } else if(!is.null(t_min)){
     t_range.m <- c(t_min, t_max)
   }
+
+  if(!is.null(t_min_exclude)){
+    exclude <- function(df){
+      df.new <- df[((df$ti > t_min_exclude) | (is.na(df$ti))),]
+      return(df.new)
+    }
+    pt.dfs <- lapply(pt.dfs, exclude)
+    ns <- sapply(pt.dfs, nrow)
+  } else {
+    ns <- rep(n, n_sims)
+  }
+  print(ns)
+
+  subset <- function(df){
+    df.new <- df[df$di == 1,]
+    return(df.new)
+  }
+  pt.dfs <- lapply(pt.dfs, subset)
+  n_p <- lapply(pt.dfs, function(x) nrow(x))
+
   modify.pt <- modify.pt.generator(
     t_noise=t_noise,
     t_range=t_range.m,
     d_misrep=d_misrep,
-    p_misrep=p_misrep,
-    t_total_exclude=t_total_exclude
+    p_misrep=p_misrep
   )
   pt.dfs <- lapply(pt.dfs, modify.pt)
-
-  ns <- rep(n, n_sims)
-  n_p <- lapply(dfs_screening, function(x) nrow(x))
 
   rename <- function(x) setnames(x, c("id", "ui", "ri"))
   lapply(assay.nsim$studies, rename)
