@@ -14,7 +14,8 @@ get.epi.funcs <- function(itype, pt, bigT){
       stop("Piecewise constant-linear incidence function only to be used
          with prior testing simulations.")
     }
-    infection.function <- function(...) infections.lincon(bigT=bigT, ...)
+    infection.function <- function(...) XSRecency:::infections.lincon(bigT=bigT, ...)
+    inc.function <- NULL
   } else {
     stop("Unknown incidence function.")
   }

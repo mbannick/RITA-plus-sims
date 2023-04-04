@@ -36,7 +36,7 @@ DEFAULTS <- list(
   pt=TRUE,
   t_min=0,
   t_max=4,
-  q=0.5,
+  q=1,
 
   gamma=0.0, # variance for the Gaussian noise to add to prior test time
   eta=0.0, # the probability of incorrectly reporting negative test
@@ -58,6 +58,7 @@ fill.overall <- function(params, overall){
   return(params)
 }
 
+# MAIN SIMULATION
 get.paramlist.a <- function(startsims){
 
   params <- expand.grid(list(
@@ -72,17 +73,34 @@ get.paramlist.a <- function(startsims){
   return(params)
 }
 
+# SECOND MECHANISM OF TESTING
 get.paramlist.b <- function(startsims){
 
   params <- expand.grid(list(
-    start_sim=startsims
+    start_sim=startsims,
+    q=c(0.5),
+    mech2=c(FALSE, TRUE)
   ))
   params <- data.table(params)
-  params <- fill.overall(params, overall)
 
   return(params)
 }
 
+# SECOND MECHANISM OF TESTING + 3 MO EXCLUSION
+get.paramlist.b2 <- function(startsims){
+
+  params <- expand.grid(list(
+    start_sim=startsims,
+    q=c(0.25, 0.5, 0.75),
+    mech2=c(FALSE, TRUE),
+    t_min_exclude=c(0, 0.25)
+  ))
+  params <- data.table(params)
+
+  return(params)
+}
+
+# RECALL BIAS
 get.paramlist.c <- function(startsims){
 
   params <- expand.grid(list(
@@ -100,6 +118,7 @@ get.paramlist.c <- function(startsims){
   return(params)
 }
 
+# NON-CONSTANT INCIDENCE
 get.paramlist.d <- function(startsims){
 
   params <- expand.grid(list(
@@ -108,25 +127,6 @@ get.paramlist.d <- function(startsims){
     t_max=c(4, 12),
     itype=c("constant", "piecewise"),
     rho=c(0, 0.0039),
-    exclude_pt_bigT=c(FALSE, TRUE),
-    start_sim=startsims
-  ))
-  params <- data.table(params)
-  params <- params[!(itype == "constant" & rho != 0)]
-  params <- params[!(itype == "piecewise" & rho == 0)]
-
-  return(params)
-}
-
-get.paramlist.e <- function(startsims){
-
-  params <- expand.grid(list(
-    q=0.5,
-    t_min=0,
-    t_max=c(4, 12),
-    itype=c("constant", "piecewise"),
-    rho=c(0, 0.0039),
-    t_min_exclude=c(0, 0.25),
     exclude_pt_bigT=c(FALSE, TRUE),
     start_sim=startsims
   ))
