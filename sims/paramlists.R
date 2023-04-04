@@ -1,4 +1,4 @@
-library(simtools)
+library(simtools, lib.loc="~/r-libs/")
 
 DEFAULTS <- list(
 
