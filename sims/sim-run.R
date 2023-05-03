@@ -116,4 +116,4 @@ df[, simstart := gp("start_sim")]
 df[, TASKID := TASKID]
 
 filename <- paste0("results-", TASKID)
-write.csv(df, file=paste0(OUTDIR, "/", filename, ".csv"))
+write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
