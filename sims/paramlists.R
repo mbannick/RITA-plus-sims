@@ -93,7 +93,9 @@ get.paramlist.b2 <- function(startsims){
     start_sim=startsims,
     q=c(0.25, 0.5, 0.75),
     mech2=c(FALSE, TRUE),
-    t_min_exclude=c(0, 0.25)
+    t_min_exclude=c(0, 0.25),
+    t_min=0,
+    t_max=c(0.5, 1)
   ))
   params <- data.table(params)
 
