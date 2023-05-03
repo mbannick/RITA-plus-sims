@@ -1,4 +1,6 @@
 #!/bin/sh
 mkdir /Users/marlena/Documents/FileZilla/xs-recent/enhanced/$1
 
-scp -r mnorwood@bayes.biostat.washington.edu:/home/students/mnorwood/hutch/xs-recent/enhanced/$1 /Users/marlena/Documents/FileZilla/xs-recent/enhanced/
+# scp -r mnorwood@rhino:/home/mnorwood/simulation-runs/rita/$1/results/ /Users/marlena/Documents/FileZilla/xs-recent/enhanced/$1/
+
+scp mnorwood@rhino:/home/mnorwood/simulation-runs/rita/$1/params.csv /Users/marlena/Documents/FileZilla/xs-recent/enhanced/$1/

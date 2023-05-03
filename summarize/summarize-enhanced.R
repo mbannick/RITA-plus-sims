@@ -12,14 +12,23 @@ version <- args[1]
 in.dir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version)
 
 # Read in files
-f <- list.files(in.dir, full.names=T)
+f <- list.files(paste0(in.dir, "/results"), full.names=T)
 f <- f[!grepl("summary", f)]
 f <- f[!grepl("detail", f)]
+f <- f[!grepl("params.csv", f)]
 f <- f[!grepl("README.md", f)]
 df <- pblapply(f, fread) %>% rbindlist(fill=T)
 df[, V1 := NULL]
 
-id.vars <- c("truth", "n_sims", "sim", "seed", "n", "p", "inc", "tau", "bigT", "itype",
+# q to adjust the estimator for not everyone having a recency test
+# this is not the q for prior test results
+setnames(df, c("n", "q"), c("n_obs", "q_adj"))
+
+params <- fread(paste0(in.dir, "/params.csv"))
+setnames(params, c("V1"), c("TASKID"))
+df <- merge(df, params, by="TASKID")
+
+id.vars <- c("truth", "n_sims", "sim", "simstart", "seed", "n", "p", "inc", "tau", "bigT", "itype",
              "window", "shadow")
 
 for(var in c("rho", "phi_frr", "phi_tfrr", "phi_norm_mu",
@@ -34,7 +43,7 @@ for(var in c("rho", "phi_frr", "phi_tfrr", "phi_norm_mu",
   }
 }
 
-id.vars.nosim <- id.vars[!id.vars %in% c("sim", "seed")]
+id.vars.nosim <- id.vars[!id.vars %in% c("sim", "seed", "simstart")]
 id.vars.nosim.est <- c(id.vars.nosim, "estimator")
 
 df[, adj_true_var_rob := adj_est_var]
