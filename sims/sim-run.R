@@ -5,6 +5,7 @@ library(magrittr)
 library(stringr)
 library(R.utils)
 library(geepack)
+library(XSRecency)
 
 source("./paramlists.R")
 source("./sim-helpers.R")
@@ -117,3 +118,4 @@ df[, TASKID := TASKID]
 
 filename <- paste0("results-", TASKID)
 write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
+

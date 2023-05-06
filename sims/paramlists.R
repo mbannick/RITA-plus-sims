@@ -44,7 +44,8 @@ DEFAULTS <- list(
   xi=0.0, # the probability of failing to report prior positive test results
   mech2=FALSE,
   t_min_exclude=NULL,
-  exclude_pt_bigT=FALSE
+  exclude_pt_bigT=FALSE,
+  logUI=FALSE
 )
 
 get.startsims <- function(nsims, simblock) seq(1, nsims, simblock)

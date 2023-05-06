@@ -11,7 +11,8 @@ args <- commandArgs(
     seed="1",
     n_sims="1000",
     sim_blocksize="10",
-    scenario="a",
+    scenario="c",
+    logUI="FALSE",
     desc="blank description"
   )
 )
@@ -22,10 +23,12 @@ BASEDIR <- "~/simulation-runs/rita/"
 
 n_sims <- as.integer(args$n_sims)
 blocksize <- as.integer(args$sim_blocksize)
+logUI <- as.logical(args$logUI)
 
 OVERALL <- DEFAULTS
 OVERALL[["n_sims"]] <- n_sims
 OVERALL[["sim_blocksize"]] <- blocksize
+OVERALL[["logUI"]] <- logUI
 OVERALL[["seed"]] <- as.integer(args$seed)
 
 startsims <- get.startsims(n_sims, blocksize)

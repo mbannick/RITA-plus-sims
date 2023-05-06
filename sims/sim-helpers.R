@@ -75,7 +75,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
                      d_misrep=0.0, q_misrep=0.0, p_misrep=0.0,
                      ptest.dist2=NULL,
                      exclude_pt_bigT=FALSE,
-                     t_min_exclude=NULL){
+                     t_min_exclude=NULL, logUI=FALSE){
 
   # Generate assay simulations
   cat("Generating assay simulations\n")
@@ -135,7 +135,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   pt.dfs <- lapply(pt.dfs, subset)
   n_p <- lapply(pt.dfs, function(x) nrow(x))
 
-  modify.pt <- modify.pt.generator(
+  modify.pt <- modifypt.generator(
     t_noise=t_noise,
     t_range=t_range.m,
     d_misrep=d_misrep,
@@ -145,6 +145,17 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
 
   rename <- function(x) setnames(x, c("id", "ui", "ri"))
   lapply(assay.nsim$studies, rename)
+
+  # Remove ui's of 0 from the phi dataframe
+  if(logUI){
+    remove0 <- function(x) x[x$ui > 0,]
+    assay.nsim$studies <- lapply(assay.nsim$studies, remove0)
+    formula <- "ri ~ poly(log(ui), 3, raw=TRUE)"
+    min_dt <- TRUE
+  } else {
+    formula <- "ri ~ poly(ui, 3, raw=TRUE)"
+    min_dt <- FALSE
+  }
 
   cat("Applying enhanced estimator\n")
   eadj <- mapply(
@@ -156,10 +167,11 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
     beta_var=assay.nsim$beta_sim[2,],
     phidat=assay.nsim$studies,
     use_geese=TRUE,
-    formula="ri ~ poly(ui, 3, raw=TRUE)",
+    formula=formula,
     family=replicate(n_sims, binomial(link="logit"), simplify=FALSE),
     big_T=bigT,
-    plot_phi=FALSE
+    plot_phi=FALSE,
+    min_dt=min_dt
   )
 
   adj <- mapply(
