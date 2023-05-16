@@ -1,4 +1,4 @@
-library(simtools, lib.loc="~/r-libs/")
+library(simtools)
 
 DEFAULTS <- list(
 
@@ -92,11 +92,12 @@ get.paramlist.b2 <- function(startsims){
 
   params <- expand.grid(list(
     start_sim=startsims,
-    q=c(0.25, 0.5, 0.75),
+    q=seq(0, 1, by=0.05),
     mech2=c(FALSE, TRUE),
     t_min_exclude=c(0, 0.25),
     t_min=0,
-    t_max=c(0.5, 1)
+    t_max=c(0.5, 1),
+    remove_pt=TRUE
   ))
   params <- data.table(params)
 

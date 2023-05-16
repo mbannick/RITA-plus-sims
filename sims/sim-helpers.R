@@ -1,71 +1,71 @@
 library(magrittr)
 
-simulate <- function(n_sims, n, inc.function, infection.function, phi.func,
-                     baseline_incidence, prevalence, rho, bigT, tau,
-                     ext_FRR, ext_df=NULL, max_FRR=NULL, last_point=FALSE){
-
-  # Generate trial data
-  data <- generate.data(n=n, n_sims=n_sims,
-                        infection.function=infection.function,
-                        phi.func=phi.func,
-                        baseline_incidence=baseline_incidence,
-                        prevalence=prevalence, rho=rho)
-
-  # Get assay parameters simulation based on external data simulation
-  assay <- assay.properties.nsim(n_sims, phi.func=phi.func, bigT=bigT, tau=tau,
-                                 ext_FRR=ext_FRR, ext_df=ext_df, max_FRR=max_FRR,
-                                 last_point=last_point)
-
-  # Calculate true assay parameters
-  true_frr <- true.frr(phi.func=phi.func, bigT=bigT, tau=tau)
-  true_mdri <- true.window.mdri(phi.func=phi.func, maxT=bigT)
-  true_window <- true.window.mdri(phi.func=phi.func, maxT=tau)
-
-  # Get expected bias of the estimators
-  exp_bias_snap <- snap.bias(phi.func=phi.func, inc.func=inc.function,
-                             inc.0=baseline_incidence, rho=rho, tau=tau)
-  exp_bias_adj <- adj.bias(phi.func=phi.func, inc.func=inc.function,
-                           inc.0=baseline_incidence, rho=rho, bigT=bigT, tau=tau)
-
-  # Compute estimates for snapshot
-  snap.true <- get.snapshot(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p,
-                            n=data$n, mu=true_window, mu_var=0)
-  snap.est <- get.snapshot(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p,
-                           n=data$n, mu=assay$mu_est, mu_var=assay$mu_var)
-
-  # Compute estimates for adjusted
-  adj.true <- get.adjusted(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p, n=data$n,
-                           omega=true_mdri, omega_var=0,
-                           beta=true_frr, beta_var=0,
-                           big_T=bigT)
-  adj.est <- get.adjusted(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p, n=data$n,
-                          omega=assay$omega_est, omega_var=assay$omega_var,
-                          beta=assay$beta_est, beta_var=assay$beta_var,
-                          big_T=bigT)
-
-  return(list(truth=rep(baseline_incidence, n_sims),
-         snap_bias_exp=rep(exp_bias_snap, n_sims),
-         snap_true_est=snap.true$est,
-         snap_true_var=snap.true$var,
-         snap_est_est=snap.est$est,
-         snap_est_var=snap.est$var,
-         adj_bias_exp=rep(exp_bias_adj, n_sims),
-         adj_true_est=adj.true$est,
-         adj_true_var=adj.true$var,
-         adj_est_est=adj.est$est,
-         adj_est_var=adj.est$var,
-         mu_est=assay$mu_est,
-         mu_var=assay$mu_var,
-         omega_est=assay$omega_est,
-         omega_var=assay$omega_var,
-         beta_est=assay$beta_est,
-         beta_var=assay$beta_var,
-         n_n=data$n_n,
-         n_r=data$n_r,
-         n_p=data$n_p,
-         n=data$n
-         ))
-}
+# simulate <- function(n_sims, n, inc.function, infection.function, phi.func,
+#                      baseline_incidence, prevalence, rho, bigT, tau,
+#                      ext_FRR, ext_df=NULL, max_FRR=NULL, last_point=FALSE){
+#
+#   # Generate trial data
+#   data <- generate.data(n=n, n_sims=n_sims,
+#                         infection.function=infection.function,
+#                         phi.func=phi.func,
+#                         baseline_incidence=baseline_incidence,
+#                         prevalence=prevalence, rho=rho)
+#
+#   # Get assay parameters simulation based on external data simulation
+#   assay <- assay.properties.nsim(n_sims, phi.func=phi.func, bigT=bigT, tau=tau,
+#                                  ext_FRR=ext_FRR, ext_df=ext_df, max_FRR=max_FRR,
+#                                  last_point=last_point)
+#
+#   # Calculate true assay parameters
+#   true_frr <- true.frr(phi.func=phi.func, bigT=bigT, tau=tau)
+#   true_mdri <- true.window.mdri(phi.func=phi.func, maxT=bigT)
+#   true_window <- true.window.mdri(phi.func=phi.func, maxT=tau)
+#
+#   # Get expected bias of the estimators
+#   exp_bias_snap <- snap.bias(phi.func=phi.func, inc.func=inc.function,
+#                              inc.0=baseline_incidence, rho=rho, tau=tau)
+#   exp_bias_adj <- adj.bias(phi.func=phi.func, inc.func=inc.function,
+#                            inc.0=baseline_incidence, rho=rho, bigT=bigT, tau=tau)
+#
+#   # Compute estimates for snapshot
+#   snap.true <- get.snapshot(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p,
+#                             n=data$n, mu=true_window, mu_var=0)
+#   snap.est <- get.snapshot(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p,
+#                            n=data$n, mu=assay$mu_est, mu_var=assay$mu_var)
+#
+#   # Compute estimates for adjusted
+#   adj.true <- get.adjusted(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p, n=data$n,
+#                            omega=true_mdri, omega_var=0,
+#                            beta=true_frr, beta_var=0,
+#                            big_T=bigT)
+#   adj.est <- get.adjusted(n_r=data$n_r, n_n=data$n_n, n_p=data$n_p, n=data$n,
+#                           omega=assay$omega_est, omega_var=assay$omega_var,
+#                           beta=assay$beta_est, beta_var=assay$beta_var,
+#                           big_T=bigT)
+#
+#   return(list(truth=rep(baseline_incidence, n_sims),
+#          snap_bias_exp=rep(exp_bias_snap, n_sims),
+#          snap_true_est=snap.true$est,
+#          snap_true_var=snap.true$var,
+#          snap_est_est=snap.est$est,
+#          snap_est_var=snap.est$var,
+#          adj_bias_exp=rep(exp_bias_adj, n_sims),
+#          adj_true_est=adj.true$est,
+#          adj_true_var=adj.true$var,
+#          adj_est_est=adj.est$est,
+#          adj_est_var=adj.est$var,
+#          mu_est=assay$mu_est,
+#          mu_var=assay$mu_var,
+#          omega_est=assay$omega_est,
+#          omega_var=assay$omega_var,
+#          beta_est=assay$beta_est,
+#          beta_var=assay$beta_var,
+#          n_n=data$n_n,
+#          n_r=data$n_r,
+#          n_p=data$n_p,
+#          n=data$n
+#          ))
+# }
 
 simulate.pt <- function(n_sims, n, infection.function, phi.func,
                      baseline_incidence, prevalence, rho, bigT, tau,
@@ -75,7 +75,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
                      d_misrep=0.0, q_misrep=0.0, p_misrep=0.0,
                      ptest.dist2=NULL,
                      exclude_pt_bigT=FALSE,
-                     t_min_exclude=NULL, logUI=FALSE){
+                     t_min_exclude=NULL, logUI=FALSE, remove_pt=FALSE){
 
   # Generate assay simulations
   cat("Generating assay simulations\n")
@@ -156,8 +156,16 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
     formula <- "ri ~ poly(ui, 3, raw=TRUE)"
     min_dt <- FALSE
   }
-
   cat("Applying enhanced estimator\n")
+  if(remove_pt){
+    remove.pt <- function(df){
+      df[, "qi"] <- 0
+      df[, "ti"] <- NA
+      df[, "deltai"] <- NA
+      return(df)
+    }
+    pt.dfs <- lapply(pt.dfs, remove.pt)
+  }
   eadj <- mapply(
     FUN=get.adjusted.pt,
     n=ns,

@@ -5,7 +5,6 @@ library(magrittr)
 library(stringr)
 library(R.utils)
 library(geepack)
-library(XSRecency)
 
 source("./paramlists.R")
 source("./sim-helpers.R")
@@ -21,9 +20,23 @@ if(is.parallel()){
   library(simtools, lib.loc="~/r-libs/")
   library(XSRecency, lib.loc="~/r-libs/")
 } else {
+
+  OVERALL <- DEFAULTS
+  OVERALL[["n_sims"]] <- 2
+  OVERALL[["sim_blocksize"]] <- 2
+  OVERALL[["logUI"]] <- FALSE
+  OVERALL[["seed"]] <- 1
+  OVERALL[["t_min_exclude"]] <- 0
+  OVERALL[["mech2"]] <- FALSE
+  OVERALL[["t_max"]] <- 1
+  OVERALL[["t_min"]] <- 0
+  OVERALL[["q"]] <- 0.5
+  OVERALL[["start_sim"]] <- 1
+  OVERALL[["remove_pt"]] <- TRUE
+
   OUTDIR <- "."
   TASKID <- 1
-  PARAMS <- data.table(do.call(data.table, DEFAULTS))
+  PARAMS <- data.table(do.call(data.table, OVERALL))
   library(flexsurv)
   library(XSRecency)
   library(simtools)
@@ -117,5 +130,6 @@ df[, simstart := gp("start_sim")]
 df[, TASKID := TASKID]
 
 filename <- paste0("results-", TASKID)
-write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
-
+if(is.parallel()){
+  write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
+}
