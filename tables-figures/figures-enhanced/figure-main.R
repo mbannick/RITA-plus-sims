@@ -17,11 +17,14 @@ source("~/repos/XSRecency/R/phi-functions.R")
 source("~/repos/XSRecency/R/data-generator.R")
 
 # READ IN VERSIONED RESULTS ---------------------------------
-# version <- "~/Documents/FileZilla/xs-recent/enhanced/15-12-2022-17-11-12/"
-version <- "~/Documents/FileZilla/xs-recent/enhanced/21-02-2023-13-46-31/" # version with new code
+# version <- "15-12-2022-17-11-12"
+version <- "21-02-2023-13-46-31" # version with new code
+version <- "2023-05-02-19-48-24" # version with new code (2)
 
-df <- fread(paste0(version, "detail.csv"))
-summ <- fread(paste0(version, "summary.csv"))
+indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+
+df <- fread(paste0(indir, "detail.csv"))
+summ <- fread(paste0(indir, "summary.csv"))
 adj.mse <- summ[estimator_type == "adj" & q == 1 & t_min == 0 & t_max == 2, mse]
 summ[, rmse := (1 - (mse / adj.mse))*100]
 summ <- summ[assay_vals == "est" & (estimator_type == "eadj" | (estimator_type == "adj" & t_min == 0 & t_max == 2 & q == 1))]
@@ -68,9 +71,8 @@ summ[, rmse_labs := paste0(sprintf("%.0f", rmse), "%")]
 
 cols <- c("#000000", brewer.pal(n=3,"Set2"))
 patts <- c("magick", "stripe", "crosshatch", "circle")
-# patts <- c("magick", "magick", "magick", "magick")
 
-pdf("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/correct-spec-bias-NEWCODE.pdf",
+pdf(paste0("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/figures/main-analysis-", version, ".pdf"),
     height=7, width=11)
 fig <- ggplot(plot_df) +
   geom_hline(yintercept=TRUTH, color="black", linetype="dashed") +

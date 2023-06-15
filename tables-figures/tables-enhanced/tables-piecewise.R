@@ -17,9 +17,14 @@ source("~/repos/XSRecency/R/data-generator.R")
 
 # READ IN VERSIONED RESULTS ---------------------------------
 
-version <- "~/Documents/FileZilla/xs-recent/enhanced/15-12-2022-17-21-56/"
-summ <- fread(paste0(version , "/summary.csv"))
-detail <- fread(paste0(version, "/detail.csv"))
+# version <- "15-12-2022-17-21-56"
+# version <- "2023-05-02-20-39-19" # bad version, missing exclude_pt_bigT
+version <- "2023-05-06-10-19-03"
+
+indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+
+summ <- fread(paste0(indir , "/summary.csv"))
+detail <- fread(paste0(indir, "/detail.csv"))
 
 # DETAIL RESULTS FOR Q EFF ---------------------------------------------
 

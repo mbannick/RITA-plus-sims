@@ -20,10 +20,16 @@ source("~/repos/XSRecency/R/data-generator.R")
 
 # READ IN VERSIONED RESULTS ---------------------------------
 
-version <- "~/Documents/FileZilla/xs-recent/enhanced/12-01-2023-06-50-52"
-version <- "~/Documents/FileZilla/xs-recent/enhanced/22-02-2023-11-47-45"
-summ <- fread(paste0(version , "/summary.csv"))
-detail <- fread(paste0(version, "/detail.csv"))
+# READ IN VERSIONED RESULTS ---------------------------------
+# version <- "12-01-2023-06-50-52"
+# version <- "21-02-2023-13-46-31"
+version <- "2023-05-02-20-28-46" # version with new code
+
+
+indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+
+summ <- fread(paste0(indir , "/summary.csv"))
+detail <- fread(paste0(indir, "/detail.csv"))
 
 # TABLE RESULTS ---------------------------------------------
 
@@ -104,7 +110,7 @@ cols <- c("#000000", rev(brewer.pal(n=3,"Set1")))
 patts <- c("magick", "stripe", "crosshatch", "circle")
 summ_plot[, cover_labs := paste0(sprintf("%.1f", cover_rob*100), "%")]
 
-pdf("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/misspec-bias-b-6-NEWCODE.pdf",
+pdf(paste0("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/figures/recall-analysis-", version, ".pdf"),
     height=7, width=11)
 
 fig <- ggplot(detail_plot) +

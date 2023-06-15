@@ -18,9 +18,14 @@ source("~/repos/XSRecency/R/data-generator.R")
 # READ IN VERSIONED RESULTS ---------------------------------
 
 # MAIN VERSION, LAST POINT INTEGRATION + NEW PHI FUNCTION
-version <- "~/Documents/FileZilla/xs-recent/enhanced/15-12-2022-17-11-12/"
+# version <- "15-12-2022-17-11-12"
+version <- "21-02-2023-13-46-31" # version with new code
+version <- "2023-05-02-19-48-24" # version with new code (2)
+version <- "2023-05-06-11-46-00" # VERSION WITH LOG UI
 
-summ <- fread(paste0(version , "summary.csv"))
+indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+
+summ <- fread(paste0(indir , "summary.csv"))
 
 TYPE <- "est"
 VARTYPE <- "rob"

@@ -11,6 +11,8 @@ source("./sim-helpers.R")
 source("./phi-func.R")
 source("./arg-construct.R")
 
+source("./gilead-figures.R")
+
 if(is.parallel()){
   a <- commandArgs(trailingOnly=TRUE)
   OUTDIR <- a[1]
@@ -23,11 +25,12 @@ if(is.parallel()){
 
   OVERALL <- DEFAULTS
   OVERALL[["n_sims"]] <- 2
+  OVERALL[["n"]] <- 10000
   OVERALL[["sim_blocksize"]] <- 2
   OVERALL[["logUI"]] <- FALSE
   OVERALL[["seed"]] <- 1
-  OVERALL[["t_min_exclude"]] <- 0
-  OVERALL[["mech2"]] <- FALSE
+  OVERALL[["t_min_exclude"]] <- 0.25
+  OVERALL[["mech2"]] <- TRUE
   OVERALL[["t_max"]] <- 1
   OVERALL[["t_min"]] <- 0
   OVERALL[["q"]] <- 0.5
@@ -119,12 +122,12 @@ if(!gp("pt")){
   ARGS[["p_misrep"]] <- gp("xi")
 
   start <- Sys.time()
-  sim <- doCall(simulate.pt, args=ARGS)
+  sim <- doCall(simulate.pt.gil, args=ARGS)
   end <- Sys.time()
   print(end - start)
 }
 
-df <- do.call(cbind, sim) %>% data.table
+df <- do.call(cbind, sim$results) %>% data.table
 df[, sim := .I]
 df[, simstart := gp("start_sim")]
 df[, TASKID := TASKID]
@@ -133,3 +136,12 @@ filename <- paste0("results-", TASKID)
 if(is.parallel()){
   write.csv(df, file=paste0(OUTDIR, "/results/", filename, ".csv"))
 }
+
+filename1 <- paste0("df-", OVERALL[["mech2"]], ".csv")
+filename2 <- paste0("df-params-", OVERALL[["mech2"]], ".csv")
+
+df.noremove <- sim$dfs[[1]]
+params <- df[1,]
+
+write.csv(df.noremove, file=filename1)
+write.csv(params, file=filename2)
