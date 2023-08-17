@@ -8,6 +8,7 @@ The contents of this folder are:
 - `sim-helpers.R`: main function that runs the simulations based on a set of arguments
 - `sim-run.R`: calls `sim-helpers.R` after setting up arguments for this simulation
 - `sim-submit.R`: submission script that submits parallel `sim-run.R` calls based on the `paramlists.R`
+- `shell.sh`: needed by the `sim-submit.R` script
 
 **Helpers**
 

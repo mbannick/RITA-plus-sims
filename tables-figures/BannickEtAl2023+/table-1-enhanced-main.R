@@ -21,7 +21,7 @@ source("~/repos/XSRecency/R/data-generator.R")
 # version <- "15-12-2022-17-11-12"
 version <- "21-02-2023-13-46-31" # version with new code
 version <- "2023-05-02-19-48-24" # version with new code (2)
-version <- "2023-05-06-11-46-00" # VERSION WITH LOG UI
+# version <- "2023-05-06-11-46-00" # VERSION WITH LOG UI
 
 indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
 
