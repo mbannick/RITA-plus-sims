@@ -1,9 +1,16 @@
-# Scripts to run the simulations and create tables and figures
+# Scripts to run the simulations
 
 The contents of this folder are:
 
-- `parallel`: Folder of the bash scripts to submit simulations.
-- `simulate-parallel.R`: Main simulation script that is called in parallel over many simulation settings. If you run this script
-by itself (rather than calling it in parallel), it will run with whatever the default arguments are in `commandArgs`.
-- `sim-helpers.R`: Functions called by `simulate-parallel.R` script, separated for organization purposes.
-- `tables-figures`: Code to create the tables and figures that are output from running the `parallel` scripts, and then summarizing them with `parallel/summarize.R` within a folder. To create these tables and figures, you have to specify a version (i.e. a file path to a folder with the version of simulation results that you want to read in). Also includes the code to run the data analysis.
+**Simulation**
+
+- `paramlists.R`: sets the parameters for each type of simulation
+- `sim-helpers.R`: main function that runs the simulations based on a set of arguments
+- `sim-run.R`: calls `sim-helpers.R` after setting up arguments for this simulation
+- `sim-submit.R`: submission script that submits parallel `sim-run.R` calls based on the `paramlists.R`
+
+**Helpers**
+
+- `phi-func.R`: helper function to create the phi function based on simulation arguments
+- `arg-construct.R`: helper functions for making arguments to the simulations
+

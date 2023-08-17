@@ -1,5 +1,7 @@
 # rm(list=ls())
 
+# DATA ANALYSIS ADDED FOR REVISIONS ON STATS IN MED, GAO AND BANNICK (2022)
+
 library(data.table)
 library(ggplot2)
 library(geepack)

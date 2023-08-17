@@ -1,14 +1,12 @@
-library(magrittr)
-
-simulate.pt <- function(n_sims, n, infection.function, phi.func,
-                     baseline_incidence, prevalence, rho, bigT, tau,
-                     ext_FRR, ext_df=NULL, max_FRR=NULL, last_point=FALSE,
-                     ptest.dist=NULL, ptest.prob=1.0,
-                     t_min=NULL, t_max=NULL, t_noise=NULL,
-                     d_misrep=0.0, q_misrep=0.0, p_misrep=0.0,
-                     ptest.dist2=NULL,
-                     exclude_pt_bigT=FALSE,
-                     t_min_exclude=NULL, logUI=FALSE, remove_pt=FALSE){
+simulate.pt.gil <- function(n_sims, n, infection.function, phi.func,
+                        baseline_incidence, prevalence, rho, bigT, tau,
+                        ext_FRR, ext_df=NULL, max_FRR=NULL, last_point=FALSE,
+                        ptest.dist=NULL, ptest.prob=1.0,
+                        t_min=NULL, t_max=NULL, t_noise=NULL,
+                        d_misrep=0.0, q_misrep=0.0, p_misrep=0.0,
+                        ptest.dist2=NULL,
+                        exclude_pt_bigT=FALSE,
+                        t_min_exclude=NULL, logUI=FALSE, remove_pt=FALSE){
 
   # Generate assay simulations
   cat("Generating assay simulations\n")
@@ -50,8 +48,15 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   }
 
   if(!is.null(t_min_exclude)){
+    exclude.mark <- function(df){
+      df.new <- df
+      df.new$no.exclude <- ((df.new$ti > t_min_exclude) | (is.na(df.new$ti)))
+      return(df.new)
+    }
+    pt.dfs <- lapply(pt.dfs, exclude.mark)
+    ORIG.pt.dfs <- pt.dfs
     exclude <- function(df){
-      df.new <- df[((df$ti > t_min_exclude) | (is.na(df$ti))),]
+      df.new <- df[df$no.exclude, ]
       return(df.new)
     }
     pt.dfs <- lapply(pt.dfs, exclude)
@@ -67,14 +72,6 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   }
   pt.dfs <- lapply(pt.dfs, subset)
   n_p <- lapply(pt.dfs, function(x) nrow(x))
-
-  modify.pt <- modifypt.generator(
-    t_noise=t_noise,
-    t_range=t_range.m,
-    d_misrep=d_misrep,
-    p_misrep=p_misrep
-  )
-  pt.dfs <- lapply(pt.dfs, modify.pt)
 
   rename <- function(x) setnames(x, c("id", "ui", "ri"))
   lapply(assay.nsim$studies, rename)
@@ -150,5 +147,5 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
     results[[elem]] <- unlist(eadj[elem,])
   }
 
-  return(results)
+  return(list(results=results, dfs=ORIG.pt.dfs))
 }
