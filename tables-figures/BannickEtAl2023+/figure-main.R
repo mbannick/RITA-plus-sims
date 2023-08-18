@@ -18,10 +18,21 @@ source("~/repos/XSRecency/R/data-generator.R")
 
 # READ IN VERSIONED RESULTS ---------------------------------
 # version <- "15-12-2022-17-11-12"
-version <- "21-02-2023-13-46-31" # version with new code
+# version <- "21-02-2023-13-46-31" # version with new code
 version <- "2023-05-02-19-48-24" # version with new code (2)
 
-indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+# SET UP DIRECTORIES ----------------------------------------
+
+# Put your root directory for your Hutch path in this file
+# It will load a variable called "FHCC" which has the root directory
+# Or you can comment this out and just make your own path in this script
+source("~/hutch-path.R")
+
+rootdir <- paste0(FHCC, "/HPTN071_RecencyTesting/PriorTestingFiles/")
+indir <- paste0(rootdir, "simulation-results/", version, "/")
+outdir <- paste0(rootdir, "tables-figures/")
+
+# READ IN FILES ---------------------------------------------
 
 df <- fread(paste0(indir, "detail.csv"))
 summ <- fread(paste0(indir, "summary.csv"))
@@ -69,10 +80,13 @@ summ[estimator_type == "adj", qlabs := "Standard\nEstimator"]
 summ[estimator_type == "adj", tlabs := "No Testing"]
 summ[, rmse_labs := paste0(sprintf("%.0f", rmse), "%")]
 
+# UPDATE FROM Co-AUTHOR REVISIONS: remove 0%
+summ[rmse_labs == "0%", rmse_labs := ""]
+
 cols <- c("#000000", brewer.pal(n=3,"Set2"))
 patts <- c("magick", "stripe", "crosshatch", "circle")
 
-pdf(paste0("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/figures/main-analysis-", version, ".pdf"),
+pdf(paste0(outdir, "figure1.pdf"),
     height=7, width=11)
 fig <- ggplot(plot_df) +
   geom_hline(yintercept=TRUTH, color="black", linetype="dashed") +
@@ -90,7 +104,7 @@ fig <- ggplot(plot_df) +
   # scale_color_manual(values=cols) +
   scale_pattern_manual(values=patts) +
   labs(x="Proportion with Tests Available",
-       y="Estimate",
+       y="Incidence Estimate per Person-Year",
        pattern="Range of Prior Testing Times") +
   theme(legend.position="top",
         text=element_text(size=16))
@@ -130,3 +144,11 @@ plot_cmbd <- append_table(
 grid.draw(plot_cmbd)
 
 dev.off()
+
+# UPDATE FROM CO-AUTHOR COMMENTS
+
+# Range of estimates from standard estimator
+df[estimator == "adj_est", estimate] %>% range
+
+# MSE of standard estimator
+summ[estimator_type == "adj", mse]

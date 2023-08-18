@@ -23,14 +23,23 @@ version <- "21-02-2023-13-46-31" # version with new code
 version <- "2023-05-02-19-48-24" # version with new code (2)
 # version <- "2023-05-06-11-46-00" # VERSION WITH LOG UI
 
-indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+# SET UP DIRECTORIES ----------------------------------------
+
+# Put your root directory for your Hutch path in this file
+# It will load a variable called "FHCC" which has the root directory
+# Or you can comment this out and just make your own path in this script
+source("~/hutch-path.R")
+
+rootdir <- paste0(FHCC, "/HPTN071_RecencyTesting/PriorTestingFiles/")
+indir <- paste0(rootdir, "simulation-results/", version, "/")
+outdir <- paste0(rootdir, "tables-figures/")
+
+# TABLE RESULTS ---------------------------------------------
 
 summ <- fread(paste0(indir , "summary.csv"))
 
 TYPE <- "est"
 VARTYPE <- "rob"
-
-# TABLE RESULTS ---------------------------------------------
 
 summ[, tname := ifelse(itype == "constant", "Constant", ifelse(itype == "linear", "Linear", "Exponential"))]
 summ[, pname := "Constant"]

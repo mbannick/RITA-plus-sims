@@ -19,14 +19,20 @@ source("~/repos/XSRecency/R/phi-functions.R")
 source("~/repos/XSRecency/R/data-generator.R")
 
 # READ IN VERSIONED RESULTS ---------------------------------
-
-# READ IN VERSIONED RESULTS ---------------------------------
 # version <- "12-01-2023-06-50-52"
 # version <- "21-02-2023-13-46-31"
 version <- "2023-05-02-20-28-46" # version with new code
 
+# SET UP DIRECTORIES ----------------------------------------
 
-indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+# Put your root directory for your Hutch path in this file
+# It will load a variable called "FHCC" which has the root directory
+# Or you can comment this out and just make your own path in this script
+source("~/hutch-path.R")
+
+rootdir <- paste0(FHCC, "/HPTN071_RecencyTesting/PriorTestingFiles/")
+indir <- paste0(rootdir, "simulation-results/", version, "/")
+outdir <- paste0(rootdir, "tables-figures/")
 
 summ <- fread(paste0(indir , "/summary.csv"))
 detail <- fread(paste0(indir, "/detail.csv"))
@@ -68,9 +74,18 @@ summ_enh <- summ[estimator_type == "eadj"]
 detail_plot <- rbind(detail_enh, detail_ref)
 summ_plot <- rbind(summ_enh, summ_ref)
 
+# **IMPORTANT**!!
+# NOTE ON AUG 17: In the version of the XSRecency code that this version of simulation results was from,
+# I switched p_misrep (xi) and d_misrep (eta)
+# by accident. Switching the group labels here.
+
+# g1 <- "Correct and complete\nreporting of prior test results"
+# g2 <- "10% with positive prior test\nsay they've never been tested"
+# g3 <- "10% with positive prior test\nsay it was negative"
+
 g1 <- "Correct and complete\nreporting of prior test results"
-g2 <- "10% with positive prior test\nsay they've never been tested"
-g3 <- "10% with positive prior test\nsay it was negative"
+g3 <- "10% with positive prior test\nsay they've never been tested"
+g2 <- "10% with positive prior test\nsay it was negative"
 
 summ_plot[eta == 0.0 & xi == 0.0, group := g1]
 summ_plot[eta == 0.1 & xi == 0.0, group := g3] # These are intentionally in this order
@@ -84,8 +99,8 @@ detail_plot[estimator_type == "adj", group := "Adjusted estimator"]
 summ_plot[, group := factor(group,
                             levels=c("Adjusted estimator",
                                      g1,
-                                     g2,
-                                     g3))]
+                                     g3,
+                                     g2))]
 summ_plot[, gamma_type := factor(gamma,
                                    levels=c(-99, 0, 0.083, 0.5),
                                    labels=c("No Tests",
@@ -95,8 +110,8 @@ summ_plot[, gamma_type := factor(gamma,
 detail_plot[, group := factor(group,
                               levels=c("Adjusted estimator",
                                        g1,
-                                       g2,
-                                       g3))]
+                                       g3,
+                                       g2))]
 
 detail_plot[estimator_type == "adj", gamma := -99]
 detail_plot[, gamma_type := factor(gamma,
@@ -110,7 +125,7 @@ cols <- c("#000000", rev(brewer.pal(n=3,"Set1")))
 patts <- c("magick", "stripe", "crosshatch", "circle")
 summ_plot[, cover_labs := paste0(sprintf("%.1f", cover_rob*100), "%")]
 
-pdf(paste0("~/repos/Recency-Algorithm-with-Prior-HIV-Testing/figures/recall-analysis-", version, ".pdf"),
+pdf(paste0(outdir, "figure2.pdf"),
     height=7, width=11)
 
 fig <- ggplot(detail_plot) +
@@ -128,7 +143,7 @@ fig <- ggplot(detail_plot) +
                                                 width=0.8, padding=0.2)) +
   # scale_color_manual(values=cols) +
   scale_pattern_manual(values=patts) +
-  labs(y="Estimate",
+  labs(y="Incidence Estimate per Person-Year",
        x="",
        pattern="Measurement error in\ntiming of prior test (SD)") +
   theme(legend.position="top",
@@ -167,25 +182,4 @@ plot_cmbd <- append_table(
 # Draw in RStudio viewer
 grid.draw(plot_cmbd)
 
-# ggplot(detail_plot) +
-#   geom_hline(yintercept=TRUTH, color="black", linetype="dashed") +
-#   geom_boxplot(aes(x=group,
-#                    y=estimate,
-#                    color=gamma_type,
-#                    group=interaction(gamma_type, group)),
-#                position=position_dodge2(preserve="single",
-#                                         padding=0.3),
-#                outlier.size=1.5,
-#                outlier.alpha=0.5) +
-#   scale_color_manual(values=cols) +
-#   labs(y="Estimate",
-#        color="Measurement error in\ntiming of prior test (SD)") +
-#   theme(legend.position="top",
-#         axis.title.x=element_blank(),
-#         legend.box="vertical",
-#         legend.box.just = "left",
-#         legend.margin=margin(),
-#         legend.direction='horizontal',
-#         legend.justification='left') +
-#   guides(fill=guide_legend(nrow=2, byrow=TRUE, ncol=1))
 dev.off()

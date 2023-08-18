@@ -20,7 +20,16 @@ source("~/repos/XSRecency/R/data-generator.R")
 # version <- "2023-05-02-20-39-19" # bad version, missing exclude_pt_bigT
 version <- "2023-05-06-10-19-03"
 
-indir <- paste0("~/Documents/FileZilla/xs-recent/enhanced/", version, "/")
+# SET UP DIRECTORIES ----------------------------------------
+
+# Put your root directory for your Hutch path in this file
+# It will load a variable called "FHCC" which has the root directory
+# Or you can comment this out and just make your own path in this script
+source("~/hutch-path.R")
+
+rootdir <- paste0(FHCC, "/HPTN071_RecencyTesting/PriorTestingFiles/")
+indir <- paste0(rootdir, "simulation-results/", version, "/")
+outdir <- paste0(rootdir, "tables-figures/")
 
 summ <- fread(paste0(indir , "/summary.csv"))
 detail <- fread(paste0(indir, "/detail.csv"))
