@@ -89,6 +89,7 @@ if(!gp("pt")){
   ARGS[["ptest.prob"]] <- function(u) gp("q")
 
   if(gp("mech2")){
+    # THESE PARAMETERS ARE FROM THE `tables-figures/misspecification-test.R` ANALYSIS
     GAMMA_PARMS <- c(1.57243557, 1.45286770, -0.02105187)
     ptest.dist2 <- function(u){
       if(is.na(u)){
