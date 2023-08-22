@@ -13,5 +13,4 @@ The contents of this folder are:
 **Helpers**
 
 - `phi-func.R`: helper function to create the phi function based on simulation arguments
-- `arg-construct.R`: helper functions for making arguments to the simulations
 
