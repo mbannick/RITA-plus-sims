@@ -129,14 +129,14 @@ get.paramlist.d <- function(startsims){
     q=0.5,
     t_min=0,
     t_max=c(4, 12),
-    itype=c("constant", "piecewise"),
+    itype=c("constant", "linear-constant"),
     rho=c(0, 0.0039),
     exclude_pt_bigT=c(FALSE, TRUE),
     start_sim=startsims
   ))
   params <- data.table(params)
   params <- params[!(itype == "constant" & rho != 0)]
-  params <- params[!(itype == "piecewise" & rho == 0)]
+  params <- params[!(itype == "linear-constant" & rho == 0)]
 
   return(params)
 }
