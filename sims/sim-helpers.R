@@ -1,6 +1,6 @@
 library(magrittr)
 
-simulate.pt <- function(n_sims, n, infection.function, phi.func,
+simulate.pt <- function(n_sims, n, itype, phi.func,
                      baseline_incidence, prevalence, rho, bigT, tau,
                      ext_FRR, ext_df=NULL, max_FRR=NULL, last_point=FALSE,
                      ptest.dist=NULL, ptest.prob=1.0,
@@ -20,19 +20,18 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
 
   # Generate screening data at time 0 with n people
   cat("Generating screening data\n")
-  sim <- sim.screening.generator(
-    prevalence=prevalence,
+  sim <- simCrossSect(
     phi.func=phi.func,
-    e.func=function(e) infection.function(e, t=0,
-                                          p=prevalence,
-                                          lambda_0=baseline_incidence,
-                                          rho=rho)
+    incidence_type=itype,
+    prevalence=prevalence,
+    baseline_incidence=baseline_incidence,
+    rho=rho
   )
   dfs_screening <- replicate(n_sims, sim(n, return_n=T), simplify=F)
 
   # Generate prior testing data
   cat("Generating prior testing data\n")
-  sim.pt <- sim.pt.generator(
+  sim.pt <- simPriorTests(
     ptest.dist=ptest.dist,
     ptest.prob=ptest.prob,
     ptest.dist2=ptest.dist2
@@ -68,7 +67,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   pt.dfs <- lapply(pt.dfs, subset)
   n_p <- lapply(pt.dfs, function(x) nrow(x))
 
-  modify.pt <- modifypt.generator(
+  modify.pt <- XSRecency:::modifyPriorTests(
     t_noise=t_noise,
     t_range=t_range.m,
     d_misrep=d_misrep,
@@ -100,7 +99,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
     pt.dfs <- lapply(pt.dfs, remove.pt)
   }
   eadj <- mapply(
-    FUN=get.adjusted.pt,
+    FUN=estEnhanced,
     n=ns,
     n_p=n_p,
     ptdf=pt.dfs,
@@ -116,7 +115,7 @@ simulate.pt <- function(n_sims, n, infection.function, phi.func,
   )
 
   adj <- mapply(
-    FUN=get.adjusted,
+    FUN=estAdjusted,
     n=ns,
     n_p=n_p,
     n_n=eadj["n_n",],

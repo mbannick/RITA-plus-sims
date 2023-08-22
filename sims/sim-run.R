@@ -9,9 +9,6 @@ library(geepack)
 source("./paramlists.R")
 source("./sim-helpers.R")
 source("./phi-func.R")
-source("./arg-construct.R")
-
-source("./gilead-figures.R")
 
 if(is.parallel()){
   a <- commandArgs(trailingOnly=TRUE)
@@ -25,7 +22,7 @@ if(is.parallel()){
 
   OVERALL <- DEFAULTS
   OVERALL[["n_sims"]] <- 2
-  OVERALL[["n"]] <- 10000
+  OVERALL[["n"]] <- 1000
   OVERALL[["sim_blocksize"]] <- 2
   OVERALL[["logUI"]] <- FALSE
   OVERALL[["seed"]] <- 1
@@ -35,7 +32,7 @@ if(is.parallel()){
   OVERALL[["t_min"]] <- 0
   OVERALL[["q"]] <- 0.5
   OVERALL[["start_sim"]] <- 1
-  OVERALL[["remove_pt"]] <- TRUE
+  OVERALL[["remove_pt"]] <- FALSE
 
   OUTDIR <- "."
   TASKID <- 1
@@ -58,11 +55,6 @@ ARGS[["n_sims"]] <- length(sims)
 
 # Get the baseline phi function
 ARGS[["phi.func"]] <- doCall(get.phi, args=gp())
-
-# Get the epi functions
-epi.funcs <- doCall(get.epi.funcs, args=gp())
-ARGS[["infection.function"]] <- epi.funcs[["infection.function"]]
-ARGS[["inc.function"]] <- epi.funcs[["inc.function"]]
 
 # Get external data
 if(!is.null(gp("duong_scale"))){
@@ -123,12 +115,12 @@ if(!gp("pt")){
   ARGS[["p_misrep"]] <- gp("xi")
 
   start <- Sys.time()
-  sim <- doCall(simulate.pt.gil, args=ARGS)
+  sim <- doCall(simulate.pt, args=ARGS)
   end <- Sys.time()
   print(end - start)
 }
 
-df <- do.call(cbind, sim$results) %>% data.table
+df <- do.call(cbind, sim) %>% data.table
 df[, sim := .I]
 df[, simstart := gp("start_sim")]
 df[, TASKID := TASKID]

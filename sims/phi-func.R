@@ -13,7 +13,7 @@ get.phi <- function(window, shadow, tau,
     }
   }
 
-  pp <- get.gamma.params(window=window/365.25, shadow=shadow/365.25)
+  pp <- XSRecency:::get.gamma.params(window=window/365.25, shadow=shadow/365.25)
 
   # Set up each type of phi function, will be overwritten
   phi.none <- function(t) 1-pgamma(t, shape=pp[1], rate=pp[2])
