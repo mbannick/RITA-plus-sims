@@ -32,7 +32,7 @@ e <- runif(10000)
 constant.inf <- XSRecency:::infections.con(e, t=0, p=0.29, lambda_0=0.032, rho=NA)
 linconst.inf <- XSRecency:::infections.lincon(e, t=0, p=0.29, lambda_0=0.032, rho=0.0039, bigT=2)
 
-pdf(paste0(outdir, "/figureA4.pdf"),
+pdf(paste0(outdir, "/figureA5.pdf"),
     height=5,width=8)
 layout(matrix(c(1, 2, 1, 3), ncol=2, byrow=TRUE), c(2, 1), c(1, 1))
 plot(Year1,Incidence1/100,xlab='Year',ylab='Incidence')
