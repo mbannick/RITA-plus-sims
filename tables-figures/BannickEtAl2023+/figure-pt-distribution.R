@@ -102,7 +102,7 @@ p2 <- ggplot(dat) +
        y="Proportion with Test Available") +
   ggtitle("Proportion with Prior Test by Infection Duration")
 
-pdf(paste0(outdir, "/figureA3.pdf"),
+pdf(paste0(outdir, "/figureA4.pdf"),
     height=10, width=10)
 grid.arrange(p1, p2, nrow=2)
 dev.off()
