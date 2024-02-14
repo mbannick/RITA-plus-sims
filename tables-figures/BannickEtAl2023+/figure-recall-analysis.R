@@ -10,6 +10,7 @@ library(xtable)
 library(utile.visuals)
 library(ggplot2)
 library(grid)
+library(gridExtra)
 library(ggpattern)
 library(ggh4x)
 library(ggtext)
@@ -125,9 +126,6 @@ cols <- c("#000000", rev(brewer.pal(n=3,"Set1")))
 patts <- c("magick", "stripe", "crosshatch", "circle")
 summ_plot[, cover_labs := paste0(sprintf("%.1f", cover_rob*100), "%")]
 
-pdf(paste0(outdir, "figure2.pdf"),
-    height=7, width=11)
-
 fig <- ggplot(detail_plot) +
   geom_hline(yintercept=TRUTH, color="black", linetype="dashed") +
   geom_boxplot_pattern(aes(x=group,
@@ -180,6 +178,7 @@ plot_cmbd <- append_table(
 )
 
 # Draw in RStudio viewer
-grid.draw(plot_cmbd)
+plot <- grid.arrange(plot_cmbd)
+ggsave(paste0(outdir, "figure2.tiff"), plot=plot, dpi=600, width=11, height=7, units="in")
 
 dev.off()

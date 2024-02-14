@@ -9,6 +9,7 @@ library(utile.visuals)
 library(ggpattern)
 library(viridis)
 library(grid)
+library(gridExtra)
 library(ggtext)
 library(ggh4x)
 library(RColorBrewer)
@@ -86,8 +87,6 @@ summ[rmse_labs == "0%", rmse_labs := ""]
 cols <- c("#000000", brewer.pal(n=3,"Set2"))
 patts <- c("magick", "stripe", "crosshatch", "circle")
 
-pdf(paste0(outdir, "figure1.pdf"),
-    height=7, width=11)
 fig <- ggplot(plot_df) +
   geom_hline(yintercept=TRUTH, color="black", linetype="dashed") +
   geom_boxplot_pattern(aes(x=qlabs,
@@ -141,9 +140,8 @@ plot_cmbd <- append_table(
 )
 
 # Draw in RStudio viewer
-grid.draw(plot_cmbd)
-
-dev.off()
+plot <- grid.arrange(plot_cmbd)
+ggsave(paste0(outdir, "figure1.tiff"), plot=plot, dpi=600, width=11, height=7, units="in")
 
 # UPDATE FROM CO-AUTHOR COMMENTS
 
